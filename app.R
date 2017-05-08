@@ -1,45 +1,55 @@
-#
-library(shiny)
-library(plotly)
+library(mapproj)
+library(maps)
+library(ggmap)
 
-data(table_for_shiny, package = "ggplot2")
-nms <- names(table_for_shiny)
-
-ui <- fluidPage(
+ui = (fluidPage(
+  titlePanel("Arson Maps"),
   
-  headerPanel("ShinyApp_1"),
-  p("Make sure that the x and y values are from the same year for the resulting graph to make sense."),
-  sidebarPanel(
-    sliderInput('sampleSize', 'Sample Size', min = 1, max = nrow(diamonds),
-                value = 1000, step = 500, round = 0),
-    selectInput('x', 'X', choices = nms, selected = "NUM_CASUALTIES_2007"),
-    selectInput('y', 'Y', choices = nms, selected = "NUM_CASUALTIES_2010"),
-    sliderInput('plotHeight', 'Height of plot (in pixels)', 
-                min = 100, max = 2000, value = 1000)
-  ),
-  mainPanel(
-    plotlyOutput('trendPlot', height = "900px")
+  sidebarLayout(
+    sidebarPanel(
+      helpText("Create maps relating state to the number of incidents of arson."),
+      
+      selectInput("var", 
+                  label = "Choose a year to display",
+                  choices = c("2007", "2010",
+                              "2013", "2015"),
+                  selected = "2007")
+      
+    ),
+    mainPanel(plotOutput("map"))
   )
+))
+
+
+
+server = (
+  function(input, output) {
+    output$map <- renderPlot({
+      data <- switch(input$var, 
+                     "2007" = state_incident_table,
+                     "2010" = state_incident_table10,
+                     "2013" = state_incident_table13,
+                     "2015" = state_incident_table15)
+      
+      color <- switch(input$var, 
+                      "2007" = "darkgreen",
+                      "2010" = "black",
+                      "2013" = "darkorange",
+                      "2015" = "darkviolet")
+      
+      legend <- switch(input$var, 
+                       "2007" = "2007",
+                       "2010" = "2010",
+                       "2013" = "2013",
+                       "2015" = "2015")
+      myMap <- get_map(location = "Montana", zoom = 3, maptype = "roadmap")
+      ggmap(myMap) + geom_point(aes(x = state_ll$V1.lon, y = state_ll$V1.lat), data = data, alpha = .5, color = "darkred", size = ((data$N)/1000))
+      
+    })
+  }
 )
 
-server <- function(input, output) {
-  
-  #add reactive data information. Dataset = built in diamonds data
-  dataset <- reactive({
-    table_for_shiny[sample(nrow(table_for_shiny), input$sampleSize),]
-  })
-  
-  output$trendPlot <- renderPlotly({
-    
-    # build graph with ggplot syntax
-    p <- ggplot(dataset(), aes_string(x = input$x, y = input$y, color = input$color)) + 
-      geom_point()
-    
-    ggplotly(p) %>% 
-      layout(height = input$plotHeight, autosize=TRUE)
-    
-  })
-  
-}
 
-shinyApp(ui, server)
+# Run the application 
+shinyApp(ui = ui, server = server)
+
