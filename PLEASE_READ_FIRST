@@ -1,0 +1,9 @@
+For my final project, I have included three final products, one R markdown file and two Shiny apps. 
+
+They can be run in any order, however before running ShinyApp, please run all of the lines of code in RUN_THIS_BEFORE_SHINY.R and before running ShinyApp_2, please run all of the lines of code in RUN_THIS_BEFORE_SHINYAPP_2.R.
+
+The R markdown file should be approximately 12 pages long and include test, an image, a map, tables, and graphs. ShinyApp should produce a webpage that allows the user to plot different variables against each other and choose different sample sizes. ShinyApp_2 should produce a webpage that allows the user to choose the year and then it should show a map of the United States with a circle over each state that corresponds to the number of recorded incidents of arson in that state that year.
+
+Thank you so much for everything this semester, I have learned so much from this class and truly enjoyed it. 
+
+Have a great summer!
