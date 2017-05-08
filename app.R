@@ -7,7 +7,7 @@ nms <- names(table_for_shiny)
 
 ui <- fluidPage(
   
-  headerPanel("Arson Data"),
+  headerPanel("ShinyApp_1"),
   p("Make sure that the x and y values are from the same year for the resulting graph to make sense."),
   sidebarPanel(
     sliderInput('sampleSize', 'Sample Size', min = 1, max = nrow(diamonds),
